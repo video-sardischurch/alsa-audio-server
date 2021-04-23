@@ -23,7 +23,7 @@ The output section defines the codec used for the stream and options for the var
   When 'flac' is specified as the codec, the compression level parameter may be defined.
 * MP3 Encoding
   The options for the 'mp3' codec include encoding (VBR/CBR), quality (VBR), and bitrate(CBR)
-
+```
     "output": {
         "codec": "flac",
         "flac": {
@@ -35,7 +35,7 @@ The output section defines the codec used for the stream and options for the var
             "quality": "0"
         }
     }
-
+```
 ### Server Options
 Server options include the logging level for ffmpeg and the port where the server listens for connections.
 
