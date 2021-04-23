@@ -1,0 +1,55 @@
+#!/bin/bash
+
+CONFIGFILE=/usr/local/etc/alsa-audio-server.json
+if [ "${1}" != "" ]; then
+    CONFIGFILE=${1}
+fi
+
+function getConfig {
+    local CFGPATH="${1}"
+    local DEFAULT="${2}"
+
+    local RTN=$(jq -rM "${CFGPATH}" ${CONFIGFILE})
+    if [[ "$RTN" == "null" ]]; then
+        RTN=${DEFAULT}
+    fi
+    echo "${RTN}"
+}
+
+SERVER_LOGLEVEL=$(getConfig '.server.logLevel' 'quiet')
+FFMPEG_LOGLEVEL="-loglevel ${SERVER_LOGLEVEL}"
+LISTEN_PORT=$(getConfig '.server.listenPort' '8080')
+
+INPUT_TYPE=$(getConfig '.input.type' 'alsa')
+INPUT_SRATE=$(getConfig '.input.sampleRate' '44100')
+INPUT_CHANNELS=$(getConfig '.input.channels' '2')
+INPUT_ADDRESS=$(getConfig '.input.address' 'hw:1')
+
+OUTPUT_CODEC=$(getConfig '.output.codec' 'flac')
+
+OUTPUT_OPTS=()
+case "${OUTPUT_CODEC}" in
+  "mp3")
+    MP3_ENCODING=$(getConfig '.output.mp3.encoding' 'cbr')
+    if [ "${MP3_ENCODING}" == "vbr" ]; then
+        MP3_QUALITY=$(getConfig '.output.mp3.quality' '0')
+        OUTPUT_OPTS+=("-qscale:a" "${MP3_QUALITY}")
+    else
+        MP3_BITRATE=$(getConfig '.output.mp3.bitrate' '320k')
+        OUTPUT_OPTS+=("-b:a" "${MP3_BITRATE}")
+    fi
+  ;;
+  "flac")
+    FLAC_COMPRESSION=$(getConfig '.output.flac.compressionLevel' '5')
+    OUTPUT_OPTS+=("-compression_level" "${FLAC_COMPRESSION}")
+  ;;
+esac
+
+
+while true; do
+    ffmpeg ${FFMPEG_LOGLEVEL} -vn \
+    -f ${INPUT_TYPE} -sample_rate ${INPUT_SRATE} -channels ${INPUT_CHANNELS} -i ${INPUT_ADDRESS} \
+    -f ${OUTPUT_CODEC} ${OUTPUT_OPTS[@]} \
+    -listen 1 -seekable 0 -reconnect_at_eof 1 -reconnect_streamed 1 \
+    http://0.0.0.0:${LISTEN_PORT}
+done

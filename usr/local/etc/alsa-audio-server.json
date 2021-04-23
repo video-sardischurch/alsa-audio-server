@@ -1,0 +1,23 @@
+{
+    "input": {
+        "type": "alsa",
+        "sampleRate": "44100",
+        "channels": "1",
+        "address": "hw:1"
+    },
+    "output": {
+        "codec": "flac",
+        "flac": {
+            "compressionLevel": "5"
+        },
+        "mp3": {
+            "encoding": "cbr",
+            "bitrate": "256k",
+            "quality": "0"
+        }
+    },
+    "server": {
+        "logLevel": "quiet",
+        "listenPort": "8080"
+    }
+}
