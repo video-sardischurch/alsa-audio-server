@@ -1,0 +1,6 @@
+Package: alsa-audio-server
+Version: 1.0.0
+Architecture: all
+Depends: ffmpeg, jq
+Maintainer: video@sardischurch.com
+Description: Service using ffmpeg to encode and server ALSA audio over http
