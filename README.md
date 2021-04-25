@@ -3,6 +3,21 @@ Scripts used to start and run the ffmpeg-based ALSA to HTTP service
 
 The service uses ffmpeg to process the audio from an ALSA source, encode the audio, and stream the encoded audio to a remote client.
 
+## Installation
+A Debian .deb package is available in this repo for download.  After installing a Debian based operating system (such as Ubuntu or Raspberry Pi OS), download the package then install using a command such as `sudo apt install ./alsa-audio-server.deb`.
+
+After installing the package, the service must be enabled and started.  Enable the package using the `systemctl` command:
+
+```
+sudo systemctl enable alsa-audio-server.service
+```
+
+Before starting the service, update the configuration file (see below) in /usr/local/etc/alsa-audio-server.json.  Then start the service:
+
+```
+sudo systemctl start alsa-audio-server.service
+```
+
 ## Configuration
 The default configuration file can be found in /usr/local/etc/alsa-audio-server.json.  There are sections to define the input, output, and server.
 
