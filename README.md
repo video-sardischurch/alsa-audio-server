@@ -58,6 +58,3 @@ Server options include the logging level for ffmpeg and the port where the serve
         "logLevel": "quiet",
         "listenPort": "8080"
     }
-
-## Running the Service
-The service definition can be found in /etc/systemd/system/alsa-audio-server.service, and can be maintained and monitored using the `systemctl` command.
